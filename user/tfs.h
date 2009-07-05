@@ -5,8 +5,8 @@
 #define TFS_VERSION 0x1
 #define BLOCK_SIZE 1024
 #define MAX_INODE_BLOCKS 1024
-#define MAX_DATA_BLOCKS (1024 * 1000)
-#define MAX_BLOCKS_PER_FILE 1000
+#define MAX_DATA_BLOCKS (1024 * 100)
+#define MAX_BLOCKS_PER_FILE 100
 
 struct tfs_sb {
 	int s_magic;
