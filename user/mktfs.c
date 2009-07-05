@@ -36,7 +36,8 @@ int main(int argc, char *argv[])
 	/* check the available size */
 	total_blocks = 1 /* super block */ + MAX_INODE_BLOCKS + MAX_DATA_BLOCKS;
 	if (st.st_size < total_blocks * BLOCK_SIZE) {
-		fprintf(stderr, "No enough space.\n");
+		fprintf(stderr, "No enough space (minimum required: %dKB).\n",
+			total_blocks * BLOCK_SIZE / 1024);
 		return 1;
 	}
 
