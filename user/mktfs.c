@@ -18,9 +18,9 @@ void show_help_message(void)
 int main(int argc, char *argv[])
 {
 	int fd;
-	int i, total_blocks;
+	int total_blocks;
 	struct tfs_sb sb;
-	unsigned char buf[BLOCK_SIZE];
+	struct stat st;
 
 	prog_name = argv[0];
 	if (argc != 2) {
@@ -28,20 +28,23 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	fd = open(argv[1], O_WRONLY);
-	if (fd < 0) {
+	if (stat(argv[1], &st) < 0) {
 		fprintf(stderr, "No such file or directory: %s\n", argv[1]);
 		return 1;
 	}
 
-	/* clear all blocks */
+	/* check the available size */
 	total_blocks = 1 /* super block */ + MAX_INODE_BLOCKS + MAX_DATA_BLOCKS;
-	memset(buf, 0, sizeof(buf));
-	for (i = 0; i < total_blocks; i++)
-		write(fd, buf, sizeof(buf));
+	if (st.st_size < total_blocks * BLOCK_SIZE) {
+		fprintf(stderr, "No enough space.\n");
+		return 1;
+	}
 
-	/* reset to offset 0 */
-	lseek(fd, 0, SEEK_SET);
+	fd = open(argv[1], O_WRONLY);
+	if (fd < 0) {
+		fprintf(stderr, "Cannot open file: %s\n", argv[1]);
+		return 1;
+	}
 
 	/* write super block */
 	sb.s_magic = TFS_MAGIC;
