@@ -145,6 +145,7 @@ static int tfs_fill_super(struct super_block *sb, void *data, int silent)
 	for (i = 0; i < TFS_MAX_DATA_BLOCKS; i++)
 		sbi->si_data[i] = raw_sb->s_data[i];
 
+	return 0;
 out:
 	brelse(bh);
 	kfree(sbi);
