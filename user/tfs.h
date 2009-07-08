@@ -7,6 +7,8 @@
 #define TFS_MAX_INODE_BLOCKS 1024
 #define TFS_MAX_DATA_BLOCKS (1024 * 100)
 #define TFS_MAX_BLOCKS_PER_FILE 100
+#define TFS_MAX_FILENAME 124
+#define TFS_ROOT_INO 0
 
 struct tfs_sb {
 	int s_magic;
@@ -28,6 +30,11 @@ struct tfs_inode {
 	int i_size;
 	int i_blocks[TFS_MAX_BLOCKS_PER_FILE];
 	int i_blocks_nr;
+};
+
+struct tfs_dirent {
+	char d_name[TFS_MAX_FILENAME];
+	int d_ino;
 };
 
 #endif /*_TFS_H */
