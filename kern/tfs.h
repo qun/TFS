@@ -7,9 +7,9 @@
 struct tfs_sb_info {
 	int si_magic;
 	int si_inode_nr;
-	int *si_inode;
+	int si_inode[TFS_MAX_INODE_BLOCKS];
 	int si_data_nr;
-	int *si_data;
+	int si_data[TFS_MAX_DATA_BLOCKS];
 	struct buffer_head *si_sbh;
 };
 
