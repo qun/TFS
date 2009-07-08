@@ -34,10 +34,10 @@ int main(int argc, char *argv[])
 	}
 
 	/* check the available size */
-	total_blocks = 1 /* super block */ + MAX_INODE_BLOCKS + MAX_DATA_BLOCKS;
-	if (st.st_size < total_blocks * BLOCK_SIZE) {
+	total_blocks = 1 /* super block */ + TFS_MAX_INODE_BLOCKS + TFS_MAX_DATA_BLOCKS;
+	if (st.st_size < total_blocks * TFS_BLOCK_SIZE) {
 		fprintf(stderr, "No enough space (minimum required: %dKB).\n",
-			total_blocks * BLOCK_SIZE / 1024);
+			total_blocks * TFS_BLOCK_SIZE / 1024);
 		return 1;
 	}
 
