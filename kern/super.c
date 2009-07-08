@@ -4,11 +4,17 @@
 #include <linux/fs.h>
 #include <linux/mm.h>
 #include <linux/buffer_head.h>
+#include <linux/list.h>
 
 #include "../user/tfs.h"
 #include "tfs.h"
 
 static struct kmem_cache *tfs_inode_cachep;
+
+static void tfs_inode_init_once(void *obj)
+{
+	inode_init_once(obj);
+}
 
 static int tfs_init_inode_cache(void)
 {
@@ -16,7 +22,7 @@ static int tfs_init_inode_cache(void)
 					     sizeof(struct tfs_inode_info),
 					     0, (SLAB_RECLAIM_ACCOUNT |
 						 SLAB_MEM_SPREAD),
-					     NULL);
+					     tfs_inode_init_once);
 	if (!tfs_inode_cachep)
 		return -ENOMEM;
 	return 0;
