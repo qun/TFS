@@ -1,7 +1,7 @@
 #ifndef _TFS_H
 #define _TFS_H
 
-#define TFS_MAGIC 0x544653;
+#define TFS_MAGIC 0x544653
 #define TFS_VERSION 0x1
 #define TFS_BLOCK_SIZE 1024
 #define TFS_MAX_INODE_BLOCKS 1024
