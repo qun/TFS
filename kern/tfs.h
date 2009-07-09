@@ -18,6 +18,11 @@ struct tfs_inode_info {
 	struct inode vfs_inode;
 };
 
+static inline struct tfs_inode_info *TFS_INODE_I(struct inode *inode)
+{
+	return container_of(inode, struct tfs_inode_info, vfs_inode);
+}
+
 /* dir.c */
 extern const struct inode_operations tfs_dir_inops;
 extern const struct file_operations tfs_dir_operations;
