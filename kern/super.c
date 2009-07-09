@@ -95,7 +95,7 @@ static struct inode *tfs_iget(struct super_block *sb, unsigned long ino)
 	inode->i_nlink = raw_inode->i_links;
 	inode->i_size = TFS_BLOCK_SIZE;
 	inode->i_blocks = 1;
-	if (inode->i_mode & S_IFDIR) {
+	if (S_ISDIR(inode->i_mode)) {
 		inode->i_op = &tfs_dir_inops;
 		inode->i_fop = &tfs_dir_operations;
 	} else {
