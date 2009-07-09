@@ -43,8 +43,17 @@ static struct inode *tfs_alloc_inode(struct super_block *sb)
 	return &inode->vfs_inode;
 }
 
+static void tfs_destroy_inode(struct inode *inode)
+{
+	struct tfs_inode_info *info;
+
+	info = TFS_INODE_I(inode);
+	kmem_cache_free(tfs_inode_cachep, info);
+}
+
 static struct super_operations tfs_sops = {
 	.alloc_inode	= tfs_alloc_inode,
+	.destroy_inode	= tfs_destroy_inode,
 };
 
 static struct inode *tfs_iget(struct super_block *sb, unsigned long ino)
