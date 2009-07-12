@@ -15,6 +15,8 @@ struct tfs_sb_info {
 
 /* TFS file system in-core inode info */
 struct tfs_inode_info {
+	int ni_blocks[TFS_MAX_BLOCKS_PER_FILE];
+	int ni_blocks_nr;
 	struct inode vfs_inode;
 };
 

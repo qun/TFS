@@ -13,7 +13,13 @@ static struct kmem_cache *tfs_inode_cachep;
 
 static void tfs_inode_init_once(void *obj)
 {
-	inode_init_once(obj);
+	int i;
+	struct tfs_inode_info *info = obj;
+
+	inode_init_once(&info->vfs_inode);
+	info->ni_blocks_nr = 0;
+	for (i = 0; i < info->ni_blocks_nr; i++)
+		info->ni_blocks[i] = 0;
 }
 
 static int tfs_init_inode_cache(void)
@@ -60,8 +66,10 @@ static struct inode *tfs_iget(struct super_block *sb, unsigned long ino)
 {
 	struct inode *inode;
 	struct tfs_inode *raw_inode;
+	struct tfs_inode_info *info;
 	struct buffer_head *bh;
 	unsigned long block;
+	int i;
 
 	inode = iget_locked(sb, ino);
 	if (!inode)
@@ -74,7 +82,7 @@ static struct inode *tfs_iget(struct super_block *sb, unsigned long ino)
 		return ERR_PTR(-EINVAL);
 
 	/* translation between inode number and real section */
-	block = ino + 1 /* block 0 (super block) */;
+	block = TFS_INODE(ino);
 	bh = sb_bread(sb, block);
 	if (!bh) {
 		iget_failed(inode);
@@ -93,8 +101,12 @@ static struct inode *tfs_iget(struct super_block *sb, unsigned long ino)
 	inode->i_uid = raw_inode->i_uid;
 	inode->i_gid = raw_inode->i_gid;
 	inode->i_nlink = raw_inode->i_links;
-	inode->i_size = TFS_BLOCK_SIZE;
-	inode->i_blocks = 1;
+	inode->i_size = raw_inode->i_size;
+	inode->i_blocks = raw_inode->i_blocks_nr;
+	info = TFS_INODE_I(inode);
+	info->ni_blocks_nr = raw_inode->i_blocks_nr;
+	for (i = 0; i < inode->i_blocks; i++)
+		info->ni_blocks[i] = raw_inode->i_blocks[i];
 	if (S_ISDIR(inode->i_mode)) {
 		inode->i_op = &tfs_dir_inops;
 		inode->i_fop = &tfs_dir_operations;
