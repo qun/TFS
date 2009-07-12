@@ -79,16 +79,19 @@ int main(int argc, char *argv[])
 		return 1;
 
 	/* directory entiry '.' */
+	memset(&dirent, 0, sizeof(dirent));
 	memcpy(dirent.d_name, ".", 1);
 	dirent.d_ino = TFS_ROOT_INO;
 	offset = TFS_DATA(0) * TFS_BLOCK_SIZE;
 	lseek(fd, offset, SEEK_SET);
 	write(fd, &dirent, sizeof(dirent));
 	/* directory entry '..' */
+	memset(&dirent, 0, sizeof(dirent));
 	memcpy(dirent.d_name, "..", 2);
 	dirent.d_ino = TFS_ROOT_INO;
 	write(fd, &dirent, sizeof(dirent));
 	/* directory entry 'lost+found' */
+	memset(&dirent, 0, sizeof(dirent));
 	memcpy(dirent.d_name, "lost+found", 10);
 	dirent.d_ino = TFS_ROOT_INO + 1;
 	write(fd, &dirent, sizeof(dirent));
@@ -110,12 +113,14 @@ int main(int argc, char *argv[])
 		return 1;
 
 	/* directory entiry '.' */
+	memset(&dirent, 0, sizeof(dirent));
 	memcpy(dirent.d_name, ".", 1);
 	dirent.d_ino = TFS_ROOT_INO + 1;
 	offset = TFS_DATA(1) * TFS_BLOCK_SIZE;
 	lseek(fd, offset, SEEK_SET);
 	write(fd, &dirent, sizeof(dirent));
 	/* directory entry '..' */
+	memset(&dirent, 0, sizeof(dirent));
 	memcpy(dirent.d_name, "..", 2);
 	dirent.d_ino = TFS_ROOT_INO;
 	write(fd, &dirent, sizeof(dirent));
