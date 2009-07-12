@@ -8,7 +8,10 @@
 #define TFS_MAX_DATA_BLOCKS (1024 * 100)
 #define TFS_MAX_BLOCKS_PER_FILE 100
 #define TFS_MAX_FILENAME 124
-#define TFS_ROOT_INO 0
+#define TFS_ROOT_INO 1
+
+#define TFS_INODE(ino) (ino)
+#define TFS_DATA(num) (TFS_MAX_INODE_BLOCKS + 1 + num)
 
 struct tfs_sb {
 	int s_magic;
