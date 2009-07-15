@@ -61,10 +61,60 @@ static int tfs_readdir(struct file *f, void *dirent, filldir_t filldir)
 	return 0;
 }
 
-struct dentry *tfs_lookup(struct inode *inode, struct dentry *de, struct nameidata *nd)
+/* input: de->d_name.name
+ * output: return NULL if everything's OK. and need to d_add(de, inode)
+ */
+struct dentry *tfs_lookup(struct inode *dir, struct dentry *de, struct nameidata *nd)
 {
-	printk("tfs_lookup invoked!\n");
-	return NULL;
+	struct tfs_inode_info *info = TFS_INODE_I(dir);
+	struct tfs_dirent *tfs_de;
+	struct inode *inode;
+	struct buffer_head *bh;
+	int size, block, i, offset;
+
+	pr_info("tfs_lookup invoked!\n");
+
+	if (de->d_name.len >= TFS_MAX_FILENAME)
+		return ERR_PTR(-ENAMETOOLONG);
+
+	size = 0;
+	i = 0;
+	while (size < dir->i_size && i < info->ni_blocks_nr) {
+		block = info->ni_blocks[i];
+
+		pr_info("  lookup block: %d\n", block);
+		bh = sb_bread(dir->i_sb, block);
+		if (!bh)
+			return ERR_PTR(-EACCES);
+
+		/* one block */
+		offset = 0;
+		while (size < dir->i_size && offset < TFS_BLOCK_SIZE) {
+			tfs_de = (struct tfs_dirent *) (bh->b_data + offset);
+			if (tfs_de->d_ino) {
+				pr_info("  lookup dir: ino: %d name:%s\n",
+					tfs_de->d_ino, tfs_de->d_name);
+				if (!strncmp(de->d_name.name, tfs_de->d_name,
+					     de->d_name.len)) {
+					/* found */
+					inode = tfs_iget(dir->i_sb, tfs_de->d_ino);
+					if (IS_ERR(inode)) {
+						brelse(bh);
+						return ERR_PTR(-EACCES);
+					}
+					d_add(de, inode);
+					brelse(bh);
+					return NULL;
+				}
+				size += sizeof(struct tfs_dirent);
+			}
+			offset += sizeof(struct tfs_dirent);
+		}
+		brelse(bh);
+
+		i++;
+	}
+	return ERR_PTR(-ENOENT);
 }
 
 const struct inode_operations tfs_dir_inops = {
