@@ -33,4 +33,7 @@ extern const struct file_operations tfs_dir_operations;
 extern const struct inode_operations tfs_file_inops;
 extern const struct file_operations tfs_file_operations;
 
+/* super.c */
+struct inode *tfs_iget(struct super_block *sb, unsigned long ino);
+
 #endif /* _KERNEL_TFS_H */

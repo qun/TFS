@@ -62,7 +62,7 @@ static struct super_operations tfs_sops = {
 	.destroy_inode	= tfs_destroy_inode,
 };
 
-static struct inode *tfs_iget(struct super_block *sb, unsigned long ino)
+struct inode *tfs_iget(struct super_block *sb, unsigned long ino)
 {
 	struct inode *inode;
 	struct tfs_inode *raw_inode;
